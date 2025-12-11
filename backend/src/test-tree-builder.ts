@@ -5,6 +5,10 @@ import path from 'path';
 const csvPath = path.join(__dirname, '../data/questions.csv');
 const questions = parseCSV(csvPath);
 
+const nestedCSVPath = path.join(__dirname, '../data/questions-nested.csv');
+//5 levels nested questions
+const nestedQuestions = parseCSV(nestedCSVPath);
+
 console.log('Parsed questions:', questions.length);
 
 const tree = buildTree(questions);
