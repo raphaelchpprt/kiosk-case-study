@@ -1,0 +1,6 @@
+ID;question label en;question label fr;content;relatedQuestion ID;order;unit;enum en;enum fr
+L1;Level 1;Niveau 1;Table;;0;;;;
+L2;Level 2;Niveau 2;Table;L1;0;;;;
+L3;Level 3;Niveau 3;Table;L2;0;;;;
+L4;Level 4;Niveau 4;Table;L3;0;;;;
+L5;Level 5;Niveau 5;number;L4;0;;;;

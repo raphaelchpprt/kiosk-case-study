@@ -1,0 +1,5 @@
+ID;question label en;question label fr;content;relatedQuestion ID;order;unit;enum en;enum fr
+Q1;Test question;Question test;InvalidType;;0;;;;
+Q2;Duplicate ID;ID dupliqué;number;;0;;;;
+Q2;Duplicate ID;ID dupliqué;number;;0;;;;
+Q3;Missing parent;Parent manquant;number;Q999;0;;;;
