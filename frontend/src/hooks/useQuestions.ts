@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Question } from '../types/question';
+import { Question, ApiResponse } from '../types/question';
 
 export function useQuestions() {
   const [questions, setQuestions] = useState<Question[]>([]);
