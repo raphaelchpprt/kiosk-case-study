@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Question, ApiResponse } from '../types/question';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 export function useQuestions() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
