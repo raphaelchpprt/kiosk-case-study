@@ -12,6 +12,9 @@ export default function Home() {
     return <div>Loading questions...</div>;
   }
 
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Kiosk</h1>
