@@ -1,6 +1,6 @@
 'use client';
 import { Question } from '@/src/types/question';
-import { TextInput, NumberInput, Select, Textarea } from '@mantine/core';
+import { TextInput, NumberInput, Select } from '@mantine/core';
 
 interface QuestionInputProps {
   question: Question;
@@ -16,7 +16,7 @@ export function QuestionInput({ question, value }: QuestionInputProps) {
     case 'number':
       return <NumberInput label={label} value={value} />;
     case 'enum':
-      return <TextInput label={label} value={value} />;
+      return <Select label={label} value={value} />;
     default:
       return null;
   }
