@@ -8,6 +8,10 @@ export default function Home() {
   console.log('🚀 ~ Home ~ questions:', questions);
   console.log('🚀 ~ Home ~ error:', error);
 
+  if (loading) {
+    return <div>Loading questions...</div>;
+  }
+
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Kiosk</h1>
