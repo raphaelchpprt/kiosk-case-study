@@ -17,6 +17,7 @@ export class InMemoryQuestionRepository implements IQuestionRepository {
 
     // validation
     const validation = validateQuestions(this.questions);
+    console.log("🚀 ~ InMemoryQuestionRepository ~ loadQuestions ~ validation:", validation)
     if (!validation.valid) {
       throw new Error(`Invalid questions: ${validation.errors.join(', ')}`);
     }
