@@ -148,6 +148,7 @@ useEffect(() => {
                   size="lg"
                   leftSection={<Check size={20} />}
                   onClick={handleSubmitAnswer}
+                  color={currentIndex === inputQuestions.length - 1 ? "teal" : "blue"}
                 >
                   {currentIndex === inputQuestions.length - 1 ? 'Finish' : 'OK'}
                 </Button>
