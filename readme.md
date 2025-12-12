@@ -111,10 +111,12 @@ AI provided explanations, comparisons, and recommendations but did not generate 
 - Auto-save draft answers at each step to prevent data loss if user doesn't have time to complete the questionnaire
 - Display full breadcrumb path for deeply nested questions (currently limited to 2 levels as per CSV structure, but backend supports N levels)
 - Then implement hierarchical stepper with indentation if CSV structure exceeds 2 levels in the future
+- Handle scalability for large question sets and large answers
 
 ### Backend
 - Add unit tests (Jest) for parsers, builders, and validators
 - Implement persistent storage in db
+- Handle scalability for large datasets for CSV and database (query optimization)
 
 ### DevOps
 - Add CI/CD pipeline (GitHub Actions) with automated tests and builds
