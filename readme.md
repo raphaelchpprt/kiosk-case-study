@@ -95,6 +95,7 @@ AI (GitHub Copilot Chat) was used as a guidance and architecture advisor through
 - Context engineering: documenting architecture decisions in ADR.md format
 - Reviewing code structure (sometimes) and suggesting improvements
 - Troubleshooting Docker configuration issues
+- Drafting names of the commits
 
 AI provided explanations, comparisons, and recommendations but did not generate final implementation code directly. All implementation code was written manually and I made all architectural decisions.
 
