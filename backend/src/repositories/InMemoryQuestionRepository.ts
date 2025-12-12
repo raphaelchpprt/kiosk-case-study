@@ -27,19 +27,6 @@ export class InMemoryQuestionRepository implements IQuestionRepository {
     console.log(`Loaded questions: ${this.questions.length}`);
   }
 
-  async getAll(): Promise<Question[]> {
-    return this.questions;
-  }
-
-  async getById(id: string): Promise<Question | null> {
-    const question = this.questions.find((q) => q.id === id);
-    if (!question) {
-      console.warn(`Question with ID "${id}" not found`);
-      return null;
-    }
-    return question;
-  }
-
   async getTree(): Promise<Question[]> {
     return this.questionTree;
   }
