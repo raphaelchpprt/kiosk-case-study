@@ -14,6 +14,7 @@ app.use(express.json());
 
 // dependencies
 const csvPath = path.join(__dirname, '../data/questions.csv');
+const invalidCSVPath = path.join(__dirname, '../data/questions-invalid.csv');
 const repository = new InMemoryQuestionRepository(csvPath);
 const service = new QuestionService(repository);
 
