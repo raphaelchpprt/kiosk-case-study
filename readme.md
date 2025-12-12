@@ -88,7 +88,7 @@ npm run dev
 
 ## AI usage
 
-AI (GitHub Copilot Chat) was used as a guidance and architecture advisor throughout development:
+GitHub Copilot Chat :
 
 - Generating initial boilerplate and project structure setup
 - Explaining and comparing technical choices (Repository pattern v for db ready)
@@ -96,6 +96,7 @@ AI (GitHub Copilot Chat) was used as a guidance and architecture advisor through
 - Reviewing code structure (sometimes) and suggesting improvements
 - Troubleshooting Docker configuration issues
 - Drafting names of the commits
+- Mantine Ui components
 
 AI provided explanations, comparisons, and recommendations but did not generate final implementation code directly. All implementation code was written manually and I made all architectural decisions.
 
