@@ -1,60 +1,5 @@
 # Kiosk – Full-stack Case Study
 
-Welcome, and thank you for your interest in Kiosk 👋  
-
-This exercise is a **technical case study for a Full-stack** position.  
-It is inspired by a real feature of our ESG/CSRD reporting product.
-
-We are **not** looking for a “finished product at all costs”.  
-We explicitly **prioritise quality over quantity**:
-- clear architecture and trade-offs
-- readable, maintainable code
-- sensible UX
-- ability to explain your decisions
-
-It is **absolutely fine if you don’t implement everything**.  
-If you run out of time, please document what you would do next.
-
-
-## 1. Goal of the exercise
-
-We want to simulate a small slice of the Kiosk product:
-
-Given a catalog of questions stored in a CSV file, load and transform this data on the server, assemble it into a hierarchical structure, expose it to the frontend, and build a dynamic form experience that captures user answers.
-
-A question may have related questions, which themselves can have related questions, and so on.
-Your job is to interpret this structure and design a coherent way to model it, render it, and collect answers.
-
-It is totally OK to not implement everything; focus on clarity, structure, and trade-offs.
-
-
-## 2. Tech stack & constraints
-
-For information, our production stack is:
-
-- **Node.js**
-- **Remix**
-- **TypeScript**
-- **Mantine UI**
-- **Prisma + PostgreSQL**
-
-For this case study, please use:
-- **React**
-- **TypeScript**
-
-You are free to use any libraries, tooling, framework etc you prefer
-We intentionally keep the constraints minimal so you can choose the architecture and tools that make the most sense to you.
-
-## 3. Deliverables
-
-Please send us:
-1. A link to your repository (GitHub, GitLab, etc.)
-2. This README filled in with:
-    - how to run the project
-    - if you used AI, how you used it
-    - what you would improve next
-3. A simple Docker setup (e.g. Dockerfile or docker-compose) to run the app end-to-end
-
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ---
@@ -131,6 +76,62 @@ AI provided explanations, comparisons, and recommendations but did not generate 
   - Updated question type (e.g., 'repeatable' or 'table-row')
 - Add conditional question visibility based on previous answers
 
+---
+
+Welcome, and thank you for your interest in Kiosk 👋  
+
+This exercise is a **technical case study for a Full-stack** position.  
+It is inspired by a real feature of our ESG/CSRD reporting product.
+
+We are **not** looking for a “finished product at all costs”.  
+We explicitly **prioritise quality over quantity**:
+- clear architecture and trade-offs
+- readable, maintainable code
+- sensible UX
+- ability to explain your decisions
+
+It is **absolutely fine if you don’t implement everything**.  
+If you run out of time, please document what you would do next.
+
+
+## 1. Goal of the exercise
+
+We want to simulate a small slice of the Kiosk product:
+
+Given a catalog of questions stored in a CSV file, load and transform this data on the server, assemble it into a hierarchical structure, expose it to the frontend, and build a dynamic form experience that captures user answers.
+
+A question may have related questions, which themselves can have related questions, and so on.
+Your job is to interpret this structure and design a coherent way to model it, render it, and collect answers.
+
+It is totally OK to not implement everything; focus on clarity, structure, and trade-offs.
+
+
+## 2. Tech stack & constraints
+
+For information, our production stack is:
+
+- **Node.js**
+- **Remix**
+- **TypeScript**
+- **Mantine UI**
+- **Prisma + PostgreSQL**
+
+For this case study, please use:
+- **React**
+- **TypeScript**
+
+You are free to use any libraries, tooling, framework etc you prefer
+We intentionally keep the constraints minimal so you can choose the architecture and tools that make the most sense to you.
+
+## 3. Deliverables
+
+Please send us:
+1. A link to your repository (GitHub, GitLab, etc.)
+2. This README filled in with:
+    - how to run the project
+    - if you used AI, how you used it
+    - what you would improve next
+3. A simple Docker setup (e.g. Dockerfile or docker-compose) to run the app end-to-end
 
 ## 4. Structure of questions.csv
 
