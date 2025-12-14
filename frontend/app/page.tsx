@@ -10,8 +10,15 @@ import {
   Progress,
   FileButton,
   Group,
+  Alert,
 } from '@mantine/core';
-import { ChevronUp, ChevronDown, Check, Upload } from 'lucide-react';
+import {
+  ChevronUp,
+  ChevronDown,
+  Check,
+  Upload,
+  AlertCircle,
+} from 'lucide-react';
 import { useQuestions } from '@/src/hooks/useQuestions';
 import {
   getAllInputQuestions,
@@ -27,6 +34,7 @@ export default function Home() {
   const [started, setStarted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | number>>({});
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleStartDefault = async () => {
     const success = await loadDefaultQuestions();
@@ -36,10 +44,18 @@ export default function Home() {
   };
 
   const handleUpload = async (file: File | null) => {
+    setUploadError(null);
     if (file) {
-      const success = await uploadCSV(file);
-      if (success) {
+      if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+        setUploadError('Please upload a valid CSV file.');
+        return;
+      }
+
+      const result = await uploadCSV(file);
+      if (result.success) {
         setStarted(true);
+      } else {
+        setUploadError(result.error || 'Unknown upload error');
       }
     }
   };
@@ -63,7 +79,7 @@ export default function Home() {
           background: 'white',
         }}
       >
-        <Container size="sm" style={{ textAlign: 'center' }}>
+        <Container size="sm">
           <div
             style={{
               background: 'white',
@@ -72,30 +88,73 @@ export default function Home() {
               border: '1px solid #cececeff',
             }}
           >
-            <Text size="xl" fw={700} mb="md" style={{ fontSize: '2rem' }}>
+            <Text
+              size="xl"
+              fw={700}
+              mb="md"
+              style={{ fontSize: '2rem', textAlign: 'center' }}
+            >
               ESG Reporting form
             </Text>
             <Text c="dimmed" mb="xl">
               Complete the employee data collection form for your ESG/CSRD
               reporting.
             </Text>
-            <Group justify="center">
-              <FileButton onChange={handleUpload} accept=".csv">
-                {(props) => (
-                  <Button
-                    {...props}
-                    size="lg"
-                    variant="outline"
-                    leftSection={<Upload size={20} />}
-                  >
-                    Upload CSV
-                  </Button>
-                )}
-              </FileButton>
+            <Group justify="center" align="start">
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.25rem',
+                }}
+              >
+                <FileButton onChange={handleUpload} accept=".csv">
+                  {(props) => (
+                    <Button
+                      {...props}
+                      size="lg"
+                      variant="outline"
+                      leftSection={<Upload size={20} />}
+                    >
+                      Upload data
+                    </Button>
+                  )}
+                </FileButton>
+                <Text c="dimmed" size="xs">
+                  Only .csv files are supported
+                </Text>
+              </div>
               <Button size="lg" onClick={handleStartDefault}>
                 Start default form
               </Button>
             </Group>
+            {uploadError && (
+              <Alert
+                variant="light"
+                color="red"
+                title="Upload Failed"
+                icon={<AlertCircle size={16} />}
+                style={{ marginTop: '2rem' }}
+              >
+                {uploadError.includes('|') ? (
+                  <>
+                    <Text size="sm" mb="xs">
+                      The CSV file contains the following errors:
+                    </Text>
+                    <ul style={{ paddingLeft: '1rem', margin: 0 }}>
+                      {uploadError
+                        .replace('Invalid CSV:', '')
+                        .split('|')
+                        .map((err, index) => (
+                          <li key={index}>{err.trim()}</li>
+                        ))}
+                    </ul>
+                  </>
+                ) : (
+                  uploadError
+                )}
+              </Alert>
+            )}
           </div>
         </Container>
       </div>
