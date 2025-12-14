@@ -121,7 +121,7 @@ export default function Home() {
                   )}
                 </FileButton>
                 <Text c="dimmed" size="xs">
-                  Only .csv files are supported
+                  Only .csv files are supported (5MB max.)
                 </Text>
               </div>
               <Button size="lg" onClick={handleStartDefault}>
