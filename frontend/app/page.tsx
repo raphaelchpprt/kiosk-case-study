@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Container,
@@ -299,7 +299,7 @@ export default function Home() {
             </Button>
           </div>
 
-          {/* Navigation verticale */}
+          {/* vertical navigation */}
           <div style={{ position: 'fixed', right: '2rem', bottom: '2rem' }}>
             <Button.Group orientation="horizontal">
               <Button variant="default" onClick={handlePrevious}>
