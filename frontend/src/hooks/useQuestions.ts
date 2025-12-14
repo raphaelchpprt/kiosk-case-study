@@ -36,7 +36,9 @@ export function useQuestions() {
     }
   };
 
-  const uploadCSV = async (file: File): Promise<boolean> => {
+  const uploadCSV = async (
+    file: File
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
 
@@ -48,22 +50,28 @@ export function useQuestions() {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const result: ApiResponse<Question[]> = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.error || `HTTP error! status: ${response.status}`,
+        };
+      }
 
       if (result.success && result.data) {
         setQuestions(result.data);
         setError(null);
-        return true;
+        return { success: true };
       } else {
-        throw new Error(result.error || 'Failed to upload CSV');
+        return {
+          success: false,
+          error: result.error || 'Failed to upload CSV',
+        };
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Upload failed');
-      return false;
+      const message = err instanceof Error ? err.message : 'Upload failed';
+      return { success: false, error: message };
     } finally {
       setLoading(false);
     }
