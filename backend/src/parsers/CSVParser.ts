@@ -1,7 +1,6 @@
-// backend/src/parsers/CSVParser.ts
+import { parse } from 'csv-parse/sync';
 import fs from 'fs';
 import path from 'path';
-import { parse } from 'csv-parse/sync';
 import { Question, QuestionType } from '../models/Question';
 
 interface CSVRow {
@@ -17,18 +16,24 @@ interface CSVRow {
 }
 
 /**
- * Parse le fichier CSV et retourne un tableau de Questions
+ * Parse le fichier CSV (uploadé ou hardcodé) et retourne un tableau de Questions
  */
-export function parseCSV(csvPath?: string): Question[] {
+export function parseCSV(input?: string | Buffer): Question[] {
   try {
-    const filePath =
-      csvPath || path.join(__dirname, '../../data/questions.csv');
+    let fileContent: string | Buffer;
 
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`CSV file not found at: ${filePath}`);
+    if (Buffer.isBuffer(input)) {
+      fileContent = input;
+    } else {
+      const filePath =
+        input || path.join(__dirname, '../../data/questions.csv');
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`CSV file not found at: ${filePath}`);
+      }
+
+      fileContent = fs.readFileSync(filePath, 'utf-8');
     }
-
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
 
     const records = parse(fileContent, {
       delimiter: ';',
@@ -39,9 +44,6 @@ export function parseCSV(csvPath?: string): Question[] {
     }) as CSVRow[];
 
     const questions: Question[] = records.map(rowToQuestion);
-
-    // console.log(`Parsed questions from CSV: ${questions.length}`);
-    // console.log('🚀 ~ parseCSV ~ questions:', questions);
 
     return questions;
   } catch (error) {
