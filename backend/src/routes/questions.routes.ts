@@ -27,5 +27,31 @@ export function createQuestionRoutes(service: QuestionService): Router {
     }
   });
 
+  /**
+   * POST api/questions/upload
+   * Upload a CSV file and return the parsed question tree
+   */
+  router.post('/upload', upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          error: 'No file uploaded',
+        });
+      }
+
+      const tree = await service.processUploadedCSV(req.file.buffer);
+      res.json({ success: true, data: tree });
+    } catch (error) {
+      console.error('Error un POST /upload:', error);
+      res.status(400).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to process CSV',
+      });
+    }
+
+    return router;
+  });
+
   return router;
 }
