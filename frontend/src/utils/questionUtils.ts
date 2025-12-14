@@ -1,18 +1,16 @@
 import { Question } from '@/src/types/question';
 
 /**
- * retourne toutes les questions qui ont un input
+ * return all questions that have an input
  */
 export function getAllInputQuestions(questions: Question[]): Question[] {
   const inputs: Question[] = [];
 
   function traverse(q: Question) {
-    // Si c'est un vrai input (pas Table, pas vide)
     if (q.content !== 'Table' && q.content !== '') {
       inputs.push(q);
     }
 
-    // creuse dans les enfants
     if (q.children && q.children.length > 0) {
       q.children.forEach(traverse);
     }
@@ -23,26 +21,24 @@ export function getAllInputQuestions(questions: Question[]): Question[] {
 }
 
 /**
- * retourne les sections principales (tables racines)
+ * return main sections (table roots)
  */
 export function getTableSections(questions: Question[]): Question[] {
   return questions.filter((q) => q.content === 'Table' || q.content === '');
 }
 
 /**
- * trouve le parent d'une question, pour le breadcrumb et la current section
+ * find the question's parent (for breadcrumb and current section)
  */
 export function findParent(
   questions: Question[],
   questionId: string
 ): Question | null {
   for (const q of questions) {
-    //les enfants
     if (q.children?.some((child) => child.id === questionId)) {
       return q;
     }
 
-    //
     if (q.children) {
       const found = findParent(q.children, questionId);
       if (found) return found;
@@ -53,7 +49,7 @@ export function findParent(
 }
 
 /**
- * renvoie index de la current section pour une question donnée
+ * return current section index for a given question
  */
 export function getCurrentSectionIndex(
   questions: Question[],
