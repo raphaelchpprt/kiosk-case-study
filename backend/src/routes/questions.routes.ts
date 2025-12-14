@@ -5,6 +5,13 @@ import { QuestionService } from '../services/QuestionService';
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'text/csv' || file.originalname.endsWith('.csv')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only CSV files are allowed.'));
+    }
+  },
 });
 
 export function createQuestionRoutes(service: QuestionService): Router {
@@ -29,7 +36,7 @@ export function createQuestionRoutes(service: QuestionService): Router {
 
   /**
    * POST api/questions/upload
-   * Upload a CSV file and return the parsed question tree
+   * Upload a data file and return the parsed question tree
    */
   router.post('/upload', upload.single('file'), async (req, res) => {
     try {
@@ -40,7 +47,10 @@ export function createQuestionRoutes(service: QuestionService): Router {
         });
       }
 
-      const tree = await service.processUploadedCSV(req.file.buffer);
+      const tree = await service.processUploadedDataFile(
+        req.file.buffer,
+        req.file.mimetype
+      );
       res.json({ success: true, data: tree });
     } catch (error) {
       console.error('Error un POST /upload:', error);

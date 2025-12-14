@@ -2,6 +2,7 @@ import { Question } from '../models/Question';
 import { IQuestionRepository } from '../repositories/IQuestionRepository';
 import { parseCSV } from '../parsers/CSVParser';
 import { buildTree } from '../builders/TreeBuilder';
+import { validateQuestions } from '../validators/QuestionValidator';
 
 export class QuestionService {
   constructor(private repository: IQuestionRepository) {}
@@ -16,17 +17,37 @@ export class QuestionService {
     }
   }
 
-  //process uploaded CSV buffer into a question tree
-  async processUploadedCSV(buffer: Buffer): Promise<Question[]> {
+  //process uploaded file buffer into a question tree after validation
+  async processUploadedDataFile(
+    buffer: Buffer,
+    mimeType: string
+  ): Promise<Question[]> {
     try {
-      const questions = parseCSV(buffer);
+      let questions: Question[];
+
+      switch (mimeType) {
+        case 'text/csv':
+          questions = parseCSV(buffer);
+          break;
+        default:
+          throw new Error('Unsupported file format');
+      }
+
+      const validation = validateQuestions(questions);
+
+      if (!validation.valid) {
+        throw new Error(`Invalid file: ${validation.errors.join(' | ')}`);
+      }
 
       const tree = buildTree(questions);
 
       return tree;
     } catch (error) {
-      console.error('Error processing uploaded CSV:', error);
-      throw new Error('Failed to process uploaded CSV');
+      console.error('Error processing uploaded file:', error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Failed to process uploaded file');
     }
   }
 }
