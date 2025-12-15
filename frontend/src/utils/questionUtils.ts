@@ -28,7 +28,7 @@ export function getTableSections(questions: Question[]): Question[] {
 }
 
 /**
- * find the question's parent (for breadcrumb and current section)
+ * find the question's parent to get current section
  */
 export function findParent(
   questions: Question[],
@@ -46,19 +46,4 @@ export function findParent(
   }
 
   return null;
-}
-
-/**
- * return current section index for a given question
- */
-export function getCurrentSectionIndex(
-  questions: Question[],
-  questionId: string
-): number {
-  const sections = getTableSections(questions);
-  const parent = findParent(questions, questionId);
-
-  if (!parent) return 0;
-
-  return sections.findIndex((s) => s.id === parent.id);
 }
