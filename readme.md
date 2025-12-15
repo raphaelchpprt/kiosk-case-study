@@ -31,17 +31,74 @@ npm install
 npm run dev
 ```
 
+## How the app works
+
+### User Journey
+
+1. **Landing Screen**: Users are presented with two options:
+   - Upload a custom CSV file with questions
+   - Start with the default form (using `questions.csv`)
+
+2. **Form Navigation**: Once started, the application:
+   - Displays a **sidebar navigation** showing all sections and questions organized hierarchically
+   - Shows questions **one at a time** in the main area with a sequential navigation flow
+   - Uses a **color-coded status system**:
+     - Blue = current question
+     - Teal = completed (answered)
+     - Yellow = visited but not answered
+     - Gray = not yet visited (non-clickable)
+   - Displays a **progress bar** at the top showing overall completion
+
+3. **Answering Questions**: Users can:
+   - Navigate sequentially using "OK" button or Prev/Next buttons
+   - Jump directly to any previously visited question via the sidebar
+   - See the parent section name as breadcrumb context above each question
+   - Input answers based on question type (text, number, or select dropdown)
+
+4. **Completion**: On the last question, the "OK" button changes to "Finish" and displays all collected answers (currently as a JSON alert, would be improved with a proper summary screen)
+
+### Technical Architecture
+
+**Backend (Express + TypeScript)**
+- **Repository Pattern**: Designed for database-readiness with (currently using CSV, but possibly swappable with Prisma/PostgreSQL)
+- **CSV Parser**: Transforms flat CSV data into a hierarchical tree structure (N-level depth support)
+- **REST API**: Exposes `/api/questions` endpoint serving the complete question tree and `/api/upload` for custom CSV uploads
+- **Validation**: Server-side validation of CSV structure with detailed error reporting
+
+**Frontend (Next.js + Mantine UI)**
+- **Next.js**: Chosen for its proximity to Remix (production stack), its modern build experience (similar to Vite), and personal familiarity with the framework
+- **Mantine UI**: Selected for its comprehensive component library (proximity with MaterialUi) and visual consistency (plus aligns with production stack requirements)
+- **Dual Data Representation**:
+  - Tree structure: Preserves hierarchy for sidebar navigation
+  - Flattened list: Simplifies sequential navigation (prev/next logic)
+- **State Management**: React hooks for current position, max visited index, and answer collection
+
+**Communication Flow**
+1. Backend parses CSV → builds tree → validates structure
+2. Frontend fetches tree via `/api/questions` 
+3. Frontend derives both hierarchical (sidebar) and flat (navigation) representations
+4. User answers stored in frontend state (ready for POST endpoint implementation)
+
+**UX Design Rationale**
+- **Left Sidebar Navigation**: Provides constant visibility of all sections and questions, allowing users to:
+  - Quickly identify incomplete or skipped questions (yellow status)
+  - Jump back to any previously visited question for review
+  - Understand their overall progress at a glance
+- **One Question at a Time**: Reduces cognitive load and maintains focus, especially important for lengthy forms
+- **Color-Coded Status**: Visual feedback system helps users track completed, visited, and pending questions without additional mental effort
+
 ## AI usage
 
 GitHub Copilot Chat :
 
 - Generating initial boilerplate and project structure setup
-- Explaining and comparing technical choices (Repository pattern v for db ready)
-- Context engineering: documenting architecture decisions in ADR.md format
+- Explaining and comparing technical choices (Repository pattern for db ready)
 - Reviewing code structure (sometimes) and suggesting improvements
 - Troubleshooting Docker configuration issues
 - Drafting names of the commits
 - Mantine Ui components
+- Test redaction
+- Drafting readme
 
 AI provided explanations, comparisons, and recommendations but did not generate final implementation code directly. All implementation code was written manually and I made all architectural decisions.
 
@@ -52,18 +109,23 @@ AI provided explanations, comparisons, and recommendations but did not generate 
 
 ### Frontend / UX / Product
 - Add more solid form validations with React Hook Form + Zod with user-friendly visual feedback messages for required fields and validation errors
-- Add loading states and skeleton screens during data fetching
-- Add keyboard navigation (Enter to submit, arrows for navigation, autofocus on inputs)
-- Implement proper summary/results final screen with maybe export functionality
-- Auto-save draft answers at each step to prevent data loss if user doesn't have time to complete the questionnaire
-- Display full breadcrumb path for deeply nested questions (currently limited to 2 levels as per CSV structure, but backend supports N levels)
-- Then implement hierarchical stepper with indentation if CSV structure exceeds 2 levels in the future
+- Improve Ui : loading states and skeleton screens during data fetching for example
+- Add more keyboard navigation (arrows for navigation)
+- Implement proper summary/results final screen with table and maybe export functionality
+- Auto-save draft answers at each step to prevent data loss if user doesn't have time to complete the questionnaire and allow them to resume where they left off (global state, local storage or save in database)
+- Implement hierarchical stepper with indentation and more explicit breadcrumbs if CSV structure exceeds 2 levels in the future for deeply nested questions (currently limited to 2 levels as per CSV structure, but backend supports N levels)
 - Handle scalability for large question sets and large answers
+- Homogenize styling approaches (CSS modules, inline styles, and Mantine style overrides) for better consistency and team collaboration
+- Dynamic rows (see data model section)
+- Improve progress line, too passive for now (add colors corresponding to complete or incomplete sections or questions)
+- Drag and drop for data file upload
+- Add unit tests
 
 ### Backend
 - Add unit tests (Jest) for parsers, builders, and validators
 - Implement persistent storage in db
 - Handle scalability for large datasets for CSV and database (query optimization)
+- Handle other formats of data files (Json, xcel files)
 
 ### DevOps
 - Add CI/CD pipeline (GitHub Actions) with automated tests and builds
@@ -74,7 +136,7 @@ AI provided explanations, comparisons, and recommendations but did not generate 
   - A country selector (either from database dictionary or external API, though API would be more resource-intensive)
   - CRUD operations for row management
   - Updated question type (e.g., 'repeatable' or 'table-row')
-- Add conditional question visibility based on previous answers
+- Conditional question visibility based on previous answers if needed
 
 ---
 
