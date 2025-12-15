@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Button,
   Container,
   Text,
-  Stepper,
   Badge,
   Progress,
   FileButton,
@@ -20,12 +19,8 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useQuestions } from '@/src/hooks/useQuestions';
-import {
-  getAllInputQuestions,
-  findParent,
-  getTableSections,
-  getCurrentSectionIndex,
-} from '@/src/utils/questionUtils';
+import { getAllInputQuestions, findParent } from '@/src/utils/questionUtils';
+import { SidebarStepper } from '@/src/components/SidebarStepper';
 import { QuestionInput } from '@/src/components/QuestionInput';
 
 export default function Home() {
@@ -35,6 +30,24 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | number>>({});
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [maxVisitedIndex, setMaxVisitedIndex] = useState(0);
+
+  const inputQuestions = useMemo(
+    () => getAllInputQuestions(questions),
+    [questions]
+  );
+  const currentQuestion = inputQuestions[currentIndex];
+  const parent = currentQuestion
+    ? findParent(questions, currentQuestion.id)
+    : null;
+  const progress = ((currentIndex + 1) / inputQuestions.length) * 100;
+
+  const navigateTo = (newIndex: number) => {
+    setCurrentIndex(newIndex);
+    if (newIndex > maxVisitedIndex) {
+      setMaxVisitedIndex(newIndex);
+    }
+  };
 
   const handleStartDefault = async () => {
     const success = await loadDefaultQuestions();
@@ -60,119 +73,14 @@ export default function Home() {
     }
   };
 
-  if (loading) {
-    return <div>Loading questions...</div>;
-  }
+  const handleJumpTo = (questionId: string) => {
+    const index = inputQuestions.findIndex((q) => q.id === questionId);
+    if (index !== -1) navigateTo(index);
+  };
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-  //welcom screen
-  if (!started) {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'white',
-        }}
-      >
-        <Container size="sm">
-          <div
-            style={{
-              background: 'white',
-              padding: '3rem',
-              borderRadius: '3rem',
-              border: '1px solid #cececeff',
-            }}
-          >
-            <Text
-              size="xl"
-              fw={700}
-              mb="md"
-              style={{ fontSize: '2rem', textAlign: 'center' }}
-            >
-              ESG Reporting form
-            </Text>
-            <Text c="dimmed" mb="xl">
-              Complete the employee data collection form for your ESG/CSRD
-              reporting.
-            </Text>
-            <Group justify="center" align="start">
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.25rem',
-                }}
-              >
-                <FileButton onChange={handleUpload} accept=".csv">
-                  {(props) => (
-                    <Button
-                      {...props}
-                      size="lg"
-                      variant="outline"
-                      leftSection={<Upload size={20} />}
-                    >
-                      Upload data
-                    </Button>
-                  )}
-                </FileButton>
-                <Text c="dimmed" size="xs">
-                  Only .csv files are supported (5MB max.)
-                </Text>
-              </div>
-              <Button size="lg" onClick={handleStartDefault}>
-                Start default form
-              </Button>
-            </Group>
-            {uploadError && (
-              <Alert
-                variant="light"
-                color="red"
-                title="Upload Failed"
-                icon={<AlertCircle size={16} />}
-                style={{ marginTop: '2rem' }}
-              >
-                {uploadError.includes('|') ? (
-                  <>
-                    <Text size="sm" mb="xs">
-                      The CSV file contains the following errors:
-                    </Text>
-                    <ul style={{ paddingLeft: '1rem', margin: 0 }}>
-                      {uploadError
-                        .replace('Invalid CSV:', '')
-                        .split('|')
-                        .map((err, index) => (
-                          <li key={index}>{err.trim()}</li>
-                        ))}
-                    </ul>
-                  </>
-                ) : (
-                  uploadError
-                )}
-              </Alert>
-            )}
-          </div>
-        </Container>
-      </div>
-    );
-  }
-
-  const inputQuestions = getAllInputQuestions(questions);
-  const currentQuestion = inputQuestions[currentIndex];
-  const parent = currentQuestion
-    ? findParent(questions, currentQuestion.id)
-    : null;
-  const sections = getTableSections(questions);
-  const currentSectionIndex = currentQuestion
-    ? getCurrentSectionIndex(questions, currentQuestion.id)
-    : 0;
   const handleNext = () => {
     if (currentIndex < inputQuestions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      navigateTo(currentIndex + 1);
     }
   };
 
@@ -185,6 +93,7 @@ export default function Home() {
   };
 
   const handleChange = (value: string | number) => {
+    if (!currentQuestion) return;
     setAnswers({
       ...answers,
       [currentQuestion.id]: value,
@@ -199,6 +108,24 @@ export default function Home() {
     }
   };
 
+  if (loading) {
+    return <div>Loading questions...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!started) {
+    return (
+      <WelcomeScreen
+        onStart={handleStartDefault}
+        onUpload={handleUpload}
+        error={uploadError}
+      />
+    );
+  }
+
   if (!currentQuestion) {
     return (
       <Container size="sm" style={{ marginTop: '2rem' }}>
@@ -207,11 +134,14 @@ export default function Home() {
     );
   }
 
-  const progress = ((currentIndex + 1) / inputQuestions.length) * 100;
-
   return (
     <div
-      style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
+      style={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
     >
       <div style={{ padding: '1rem', borderBottom: '1px solid #e9ecef' }}>
         <Container size="lg">
@@ -229,18 +159,25 @@ export default function Home() {
       >
         <div
           style={{
-            width: '280px',
-            padding: '2rem 1rem',
+            width: '300px',
             borderRight: '1px solid #e9ecef',
             background: '#f8f9fa',
-            alignContent: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            overflow: 'hidden',
           }}
         >
-          <Stepper active={currentSectionIndex} orientation="vertical">
-            {sections.map((section) => (
-              <Stepper.Step key={section.id} label={section.labelEn} />
-            ))}
-          </Stepper>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <SidebarStepper
+              questions={questions}
+              allInputs={inputQuestions}
+              answers={answers}
+              currentQuestionId={currentQuestion?.id}
+              onJumpTo={handleJumpTo}
+              maxVisitedIndex={maxVisitedIndex}
+            />
+          </div>
         </div>
 
         <div
@@ -249,6 +186,8 @@ export default function Home() {
             display: 'flex',
             alignItems: 'center',
             position: 'relative',
+            paddingBottom: '15vh',
+            overflowY: 'auto',
           }}
         >
           <div
@@ -273,7 +212,12 @@ export default function Home() {
                   marginBottom: '1rem',
                 }}
               >
-                <Badge variant="outline" mr="md">
+                <Badge
+                  variant="outline"
+                  mr="md"
+                  size="lg"
+                  style={{ flexShrink: 0 }}
+                >
                   {currentIndex + 1}
                 </Badge>
                 <Text size="xl" fw={600}>
@@ -284,6 +228,7 @@ export default function Home() {
                 question={currentQuestion}
                 value={answers[currentQuestion.id] || ''}
                 onChange={handleChange}
+                onSubmit={handleSubmitAnswer}
               />
             </div>
 
@@ -299,7 +244,6 @@ export default function Home() {
             </Button>
           </div>
 
-          {/* vertical navigation */}
           <div style={{ position: 'fixed', right: '2rem', bottom: '2rem' }}>
             <Button.Group orientation="horizontal">
               <Button variant="default" onClick={handlePrevious}>
@@ -316,6 +260,108 @@ export default function Home() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function WelcomeScreen({
+  onStart,
+  onUpload,
+  error,
+}: {
+  onStart: () => void;
+  onUpload: (file: File | null) => void;
+  error: string | null;
+}) {
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'white',
+      }}
+    >
+      <Container size="sm">
+        <div
+          style={{
+            background: 'white',
+            padding: '3rem',
+            borderRadius: '3rem',
+            border: '1px solid #cececeff',
+          }}
+        >
+          <Text
+            size="xl"
+            fw={700}
+            mb="md"
+            style={{ fontSize: '2rem', textAlign: 'center' }}
+          >
+            ESG Reporting form
+          </Text>
+          <Text c="dimmed" mb="xl">
+            Complete the employee data collection form for your ESG/CSRD
+            reporting.
+          </Text>
+          <Group justify="center" align="start" grow>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.25rem',
+              }}
+            >
+              <FileButton onChange={onUpload} accept=".csv">
+                {(props) => (
+                  <Button
+                    {...props}
+                    size="lg"
+                    variant="outline"
+                    leftSection={<Upload size={20} />}
+                    fullWidth
+                  >
+                    Upload data
+                  </Button>
+                )}
+              </FileButton>
+              <Text c="dimmed" size="xs">
+                Only valid .csv files are supported (5MB max.)
+              </Text>
+            </div>
+            <Button size="lg" onClick={onStart} fullWidth>
+              Start default form
+            </Button>
+          </Group>
+          {error && (
+            <Alert
+              variant="light"
+              color="red"
+              title="Upload Failed"
+              icon={<AlertCircle size={16} />}
+              style={{ marginTop: '2rem' }}
+            >
+              {error.includes('|') ? (
+                <>
+                  <Text size="sm" mb="xs">
+                    The file contains the following errors:
+                  </Text>
+                  <ul style={{ paddingLeft: '1rem', margin: 0 }}>
+                    {error
+                      .replace('Invalid CSV:', '')
+                      .split('|')
+                      .map((err, index) => (
+                        <li key={index}>{err.trim()}</li>
+                      ))}
+                  </ul>
+                </>
+              ) : (
+                error
+              )}
+            </Alert>
+          )}
+        </div>
+      </Container>
     </div>
   );
 }
