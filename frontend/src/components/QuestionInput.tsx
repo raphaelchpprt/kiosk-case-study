@@ -1,4 +1,5 @@
 'use client';
+
 import { Question } from '@/src/types/question';
 import { TextInput, NumberInput, Select } from '@mantine/core';
 
@@ -6,11 +7,14 @@ interface QuestionInputProps {
   question: Question;
   value: string | number;
   onChange: (value: string | number) => void;
+  onSubmit: () => void;
 }
+
 export function QuestionInput({
   question,
   value,
   onChange,
+  onSubmit,
 }: QuestionInputProps) {
   console.log('🚀 ~ value:', value);
   switch (question.content) {
@@ -22,6 +26,12 @@ export function QuestionInput({
           size="lg"
           placeholder="Enter text"
           onChange={(e) => onChange(e.currentTarget.value)}
+          autoFocus
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onSubmit?.();
+            }
+          }}
         />
       );
     case 'number':
@@ -34,6 +44,12 @@ export function QuestionInput({
           rightSection={question.unit}
           placeholder="Enter a number"
           min={0}
+          autoFocus
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onSubmit?.();
+            }
+          }}
         />
       );
     case 'enum':
@@ -53,6 +69,12 @@ export function QuestionInput({
           searchable
           clearable
           size="lg"
+          autoFocus
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onSubmit?.();
+            }
+          }}
         />
       );
     default:
