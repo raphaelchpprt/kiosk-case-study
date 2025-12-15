@@ -107,19 +107,23 @@ AI provided explanations, comparisons, and recommendations but did not generate 
 ### Architecture
 - Move shared types to a monorepo `shared/` package for end-to-end type safety thanks to single source of truth
 
-### Frontend / UX / Product
+### Frontend
 - Add more solid form validations with React Hook Form + Zod with user-friendly visual feedback messages for required fields and validation errors
-- Improve Ui : loading states and skeleton screens during data fetching for example
-- Add more keyboard navigation (arrows for navigation)
-- Implement proper summary/results final screen with table and maybe export functionality
-- Auto-save draft answers at each step to prevent data loss if user doesn't have time to complete the questionnaire and allow them to resume where they left off (global state, local storage or save in database)
-- Implement hierarchical stepper with indentation and more explicit breadcrumbs if CSV structure exceeds 2 levels in the future for deeply nested questions (currently limited to 2 levels as per CSV structure, but backend supports N levels)
 - Handle scalability for large question sets and large answers
 - Homogenize styling approaches (CSS modules, inline styles, and Mantine style overrides) for better consistency and team collaboration
-- Dynamic rows (see data model section)
+- Add unit tests
+
+### UX
+- Improve Ui : loading states and skeleton screens during data fetching for example
+- Add more keyboard navigation (arrows for navigation)
+- Implement hierarchical stepper with indentation and more explicit breadcrumbs if CSV structure exceeds 2 levels in the future for deeply nested questions (currently limited to 2 levels as per CSV structure, but backend supports N levels)
 - Improve progress line, too passive for now (add colors corresponding to complete or incomplete sections or questions)
 - Drag and drop for data file upload
-- Add unit tests
+
+### Product
+- Implement proper summary/results final screen with table and maybe export functionality
+- Auto-save draft answers at each step to prevent data loss if user doesn't have time to complete the questionnaire and allow them to resume where they left off (global state, local storage or save in database)
+- Dynamic rows (see data model section)
 
 ### Backend
 - Add unit tests (Jest) for parsers, builders, and validators
