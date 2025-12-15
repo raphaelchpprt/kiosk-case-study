@@ -16,7 +16,7 @@ interface CSVRow {
 }
 
 /**
- * Parse le fichier CSV (uploadé ou hardcodé) et retourne un tableau de Questions
+ * Returns an array of Questions parsed from a CSV file or buffer
  */
 export function parseCSV(input?: string | Buffer): Question[] {
   try {
@@ -54,10 +54,6 @@ export function parseCSV(input?: string | Buffer): Question[] {
   }
 }
 
-/**
- * Transforme une ligne CSV en objet Question
- * (Helper function non exportée)
- */
 function rowToQuestion(row: CSVRow): Question {
   return {
     id: row['ID'],
@@ -72,10 +68,6 @@ function rowToQuestion(row: CSVRow): Question {
   };
 }
 
-/**
- * Parse les options d'un enum (séparées par des virgules)
- * (Helper function non exportée)
- */
 function parseEnumOptions(enumString?: string): string[] | undefined {
   if (!enumString) return undefined;
 

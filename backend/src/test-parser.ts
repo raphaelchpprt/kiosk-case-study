@@ -6,6 +6,5 @@ const questions = parseCSV(csvPath);
 
 console.log('Parsed questions:', questions.length);
 
-// Check for relatedQuestionId
 const withParent = questions.filter((q) => q.relatedQuestionId);
 console.log(`Questions with parent: ${withParent.length}`);

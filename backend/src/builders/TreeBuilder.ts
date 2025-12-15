@@ -11,8 +11,6 @@ export function buildTree(questions: Question[]): Question[] {
     questionMap.set(q.id, { ...q, children: [] });
   });
 
-  //console.log('🚀 ~ buildTree ~ questionMap:', questionMap);
-
   const roots: Question[] = [];
 
   // build relations parent-enfant
@@ -43,7 +41,7 @@ export function buildTree(questions: Question[]): Question[] {
   return roots;
 }
 
-// sort children of each question by order with recursion
+// helper func that sorts children of each question by order with recursion
 function sortChildren(questions: Question[]): void {
   questions.sort((a, b) => a.order - b.order);
 

@@ -15,14 +15,12 @@ export class InMemoryQuestionRepository implements IQuestionRepository {
   private loadQuestions(csvPath?: string): void {
     this.questions = parseCSV(csvPath);
 
-    // validation
     const validation = validateQuestions(this.questions);
-    console.log("🚀 ~ InMemoryQuestionRepository ~ loadQuestions ~ validation:", validation)
+
     if (!validation.valid) {
       throw new Error(`Invalid questions: ${validation.errors.join(', ')}`);
     }
 
-    // build tree
     this.questionTree = buildTree(this.questions);
 
     console.log(`Loaded questions: ${this.questions.length}`);

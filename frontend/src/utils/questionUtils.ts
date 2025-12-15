@@ -21,7 +21,7 @@ export function getAllInputQuestions(questions: Question[]): Question[] {
 }
 
 /**
- * return main sections (table roots)
+ * return the main sections (table roots)
  */
 export function getTableSections(questions: Question[]): Question[] {
   return questions.filter((q) => q.content === 'Table' || q.content === '');

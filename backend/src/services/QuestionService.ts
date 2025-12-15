@@ -7,7 +7,7 @@ import { validateQuestions } from '../validators/QuestionValidator';
 export class QuestionService {
   constructor(private repository: IQuestionRepository) {}
 
-  //get hierarchy of questions
+  //to get hierarchy of questions
   async getQuestionTree(): Promise<Question[]> {
     try {
       return await this.repository.getTree();
@@ -17,7 +17,7 @@ export class QuestionService {
     }
   }
 
-  //process uploaded file buffer into a question tree after validation
+  //returns a question tree after validation
   async processUploadedDataFile(
     buffer: Buffer,
     mimeType: string
